@@ -42,25 +42,28 @@ def process_batches():
         # Fetch the batch of movie plots
         batch_movies = list(movies_collection.find().skip(skip).limit(batch_size))
         plot_list_pre_embedding = []
+        title_list_pre_embedding = []
         movie_ids = []
 
         # Collect the plots and movie IDs for the current batch
         for movie in batch_movies:
             if "plot" in movie:
                 plot_list_pre_embedding.append(movie["plot"])
+                title_list_pre_embedding.append(movie["title"])
                 movie_ids.append(movie["_id"])
 
         print(f"Processing batch {skip // batch_size + 1}...")
 
         embedded_plot_list = query(plot_list_pre_embedding)
-
-        if embedded_plot_list:
+        embedded_title_list = query(title_list_pre_embedding)
+        if embedded_plot_list and embedded_plot_list:
             # Create the new documents for the embedded_movies collection
             for i, movie_id in enumerate(movie_ids):
                 # Update the movie document with its embedding
                 print(batch_movies[i])
                 embedded_movie = {
                     "_id": movie_id,
+                    "title_embedding": embedded_title_list[i],
                     "plot_embedding": embedded_plot_list[i],
                     **batch_movies[i]  # Include all the original movie data
                 }

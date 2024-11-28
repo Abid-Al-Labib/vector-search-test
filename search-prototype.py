@@ -21,17 +21,17 @@ database = client["sample_mflix"]
 embedded_movies_collection = database["embedded_movies"]
 
 
-search_query = "young  man in the sea meets a bengal tiger"
+search_query = "A girl who is a police officer"
 embedded_search = query(search_query)
 
 pipeline = [
   {
     '$vectorSearch': {
-      'index': 'vector_index', 
+      'index': 'vector_plot_index', 
       'path': 'plot_embedding', 
       'queryVector': embedded_search,
       'numCandidates': 150, 
-      'limit': 10
+      'limit': 5
     }
   }, {
     '$project': {
@@ -46,8 +46,40 @@ pipeline = [
 ]
 
 # run pipeline
-result = client["sample_mflix"]["embedded_movies"].aggregate(pipeline)
+plot_result = client["sample_mflix"]["embedded_movies"].aggregate(pipeline)
 # print results
-for i in result:
+print(f"VECTOR SEARCH ON PLOT: {search_query}")
+for i in plot_result:
+    print(i)
+ 
+
+
+title_search_query = "Wheat"
+title_embedded_search = query(title_search_query)
+pipeline2 = [
+  {
+    '$vectorSearch': {
+      'index': 'vector_title_index', 
+      'path': 'title_embedding', 
+      'queryVector': title_embedded_search,
+      'numCandidates': 150, 
+      'limit': 5
+    }
+  }, {
+    '$project': {
+      '_id': 0, 
+      'title': 1, 
+      'score': {
+        '$meta': 'vectorSearchScore'
+      }
+    }
+  }
+]
+
+print(f"VECTOR SEARCH ON TITLE: {title_search_query}")
+# run pipeline
+title_result = client["sample_mflix"]["embedded_movies"].aggregate(pipeline2)
+# print results
+for i in title_result:
     print(i)
  
