@@ -21,14 +21,6 @@ database = client["sample_mflix"]
 movies_collection = database["movies"]
 embedded_movies_collection = database["embedded_movies"]
 
-# plot_list_pre_embedding = []  
-# # Fetch and print the first 20 documents
-# for movie in collection.find().limit(5):
-#     plot_list_pre_embedding.append(movie["plot"])
-# print(plot_list_pre_embedding)
-# embedded_plot_list = query(plot_list_pre_embedding) 
-# print(embedded_plot_list)
-
 # Batch Size
 batch_size = 50  # Adjust batch size according to your needs
 
